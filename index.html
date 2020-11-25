@@ -11,7 +11,12 @@
         <div id="container">
             <div id="week_show">{{ CurrentDay }}</div>
             <div id="main_desc">{{ MainDescription }}</div>
-            <div id="next_day" @click="goNextDay">功能未完成，随机提供一个药瓶</div>
+            <div class="next_day" id="next_day_random" @click="goNextDayRandom">功能未完成，随机提供一个药瓶</div>
+            <div class="next_day" id="next_day_100" @click="goNextDayWith(100)">功能未完成，提供一个100%药瓶</div>
+            <div class="next_day" id="next_day_75"  @click="goNextDayWith(75)" >功能未完成，提供一个 75%药瓶</div>
+            <div class="next_day" id="next_day_50"  @click="goNextDayWith(50)" >功能未完成，提供一个 50%药瓶</div>
+            <div class="next_day" id="next_day_25"  @click="goNextDayWith(25)" >功能未完成，提供一个 25%药瓶</div>
+            <div class="next_day" id="next_day_5"   @click="goNextDayWith(5)"  >功能未完成，提供一个  5%药瓶</div>
         </div>
     </body>
     <script type="text/javascript" src="resources/datas/stories.js"></script>

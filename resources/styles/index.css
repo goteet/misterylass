@@ -35,10 +35,10 @@ body
 	line-height:2.5;
 	font-size:14;
 	padding:20px;
-	magin-bottom:10px;
+	margin-bottom:10px;
 }
 
-#next_day
+.next_day
 {
 	max-width: 500px;
     color:#444;
