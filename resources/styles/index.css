@@ -7,7 +7,6 @@ body
 	background-color: #e0e0e0;
 
 	margin: 0 auto;
-	max-width: 1150px;
 
 	font-size:14;
 	line-height:1.7;	
@@ -20,4 +19,28 @@ body
 {
 	width:100%;
 	overflow-y:auto;
+}
+
+#week_show
+{
+	background-image: url("wood.png");
+	font-size:30;
+	line-height:2.5;	
+	color:#FFFFFF;
+	text-align:center;
+}
+
+#next_day
+{
+	max-width: 500px;
+    color:#444;
+	border:1px solid #aaaaaa;
+	background:#dddddd;
+	box-shadow: 0px 2px 5px -1px rgba(0,0,0,0.5);
+	cursor:pointer;
+	font-size:14;
+	line-height:3;
+	text-align: center;
+	margin:auto;
+	margin-bottom:10px;
 }
