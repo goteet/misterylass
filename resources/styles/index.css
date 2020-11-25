@@ -30,6 +30,14 @@ body
 	text-align:center;
 }
 
+#main_desc
+{
+	line-height:2.5;
+	font-size:14;
+	padding:20px;
+	magin-bottom:10px;
+}
+
 #next_day
 {
 	max-width: 500px;
