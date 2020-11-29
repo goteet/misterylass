@@ -10,7 +10,7 @@
     <body>
         <div id="container">
             <div id="week_show">{{ CurrentDay }}</div>
-            <div id="main_desc">{{ MainDescription }}</div>
+            <div id="main_desc" v-html="MainDescription"></div>
             <div class="next_day" id="next_day_random" @click="goNextDayRandom">功能未完成，随机提供一个药瓶</div>
             <div class="next_day" id="next_day_100" @click="goNextDayWith(100)">功能未完成，提供一个100%药瓶</div>
             <div class="next_day" id="next_day_75"  @click="goNextDayWith(75)" >功能未完成，提供一个 75%药瓶</div>

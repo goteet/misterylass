@@ -32,8 +32,9 @@ body
 
 #main_desc
 {
+	text-indent: 30;
 	line-height:2.5;
-	font-size:14;
+	font-size:30;
 	padding:20px;
 	margin-bottom:10px;
 }
