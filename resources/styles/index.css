@@ -5,9 +5,6 @@ html {
 body
 {
 	margin:0 auto;
-
-	font-size:12pt;
-	line-height:20pt;
 	color:#666666;
 }
 
@@ -22,7 +19,7 @@ body
 	background-color: #e0e0e0;
 }
 
-#week_show
+#weekday
 {
 	background-image: url("wood.png");
 	font-size:30;
@@ -31,13 +28,20 @@ body
 	text-align:center;
 }
 
-#main_desc
+#title
 {
-	text-indent: 30;
-	line-height:2.5;
-	font-size:30;
+	text-align:center;
+	line-height:40pt;
+	font-size:20pt;
+}
+
+#content
+{
+	text-indent: 30pt;
+	font-size:15pt;
+	line-height:20pt;
+
 	padding:20px;
-	margin-bottom:10px;
 }
 
 .next_day

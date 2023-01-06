@@ -16,6 +16,7 @@ const RandomRange = function(min,max){
     return min + Math.floor(Math.random() * (max-min+1));
 }
 
+/*
 const RootComponent = {
     data:{
         today:0,
@@ -71,6 +72,7 @@ const RootComponent = {
             }
             this.pickNewStoryLine();
         },
+
         pickNewStoryLine:function(){
             let entranceCount = kStoryLines.entrances.length;
             let pickIndex = RandomMax(entranceCount);
@@ -80,4 +82,65 @@ const RootComponent = {
         }
     },
 }
+*/
+
+const RootComponent = {
+    data:{
+        today:0,
+        currentStoryId: 0
+    },
+
+    mounted:function(){
+        
+    },
+
+
+    computed: {
+        currentWeekDayName: function() { return kWeekDayString[this.today]; },
+        currentStoryNode: function(){ return StoryLibrary[this.currentStoryId]; },
+        currrentStoryTitle : function(){ return this.currentStoryNode.title;},
+        currrentStoryContent : function() { return this.currentStoryNode.content; }
+    },
+
+    methods: {
+        
+        goNextDayRandom:function(){
+            let potionEfficiency = RandomRange(1, 100);
+            this.goNextDayWith(potionEfficiency);
+        },
+        goNextDayWith: function(efficiency) {
+            this.today = (this.today + 1) % 7; 
+            this.potionEfficiency = efficiency;
+            this.advanceStoryLine();
+        },
+        advanceStoryLine: function() {
+            if(this.existStoryLines.length == 0) {
+                this.pickNewStoryLine();
+                return;
+            }
+            
+            let currentStoryLineId = this.existStoryLines[0];
+            if(!kStoryLines.links.hasOwnProperty(currentStoryLineId)) {
+                this.existStoryLines.length = 0;
+                this.pickNewStoryLine();
+                return;
+            }
+
+            let links = kStoryLines.links[currentStoryLineId];
+            this.existStoryLines.length = 0;
+            for(let i = 0; i < links.length; ++i){
+                if(!links[i].hasOwnProperty("efficiency")) {
+                    this.existStoryLines.push(links[i].next);
+                    return;
+                }
+                else if(links[i].efficiency <= this.potionEfficiency){
+                    this.existStoryLines.push(links[i].next);
+                    return;
+                }
+            }
+            this.pickNewStoryLine();
+        },
+    },
+}
+
 const Application = new Vue(RootComponent).$mount('#container')
