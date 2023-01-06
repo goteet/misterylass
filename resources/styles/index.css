@@ -1,24 +1,25 @@
 html {
 	background-image: url("background.jpg");
-	margin:50px 50px 0px 50px;
+	margin:0 auto;
 } 
 body
 {
-	background-color: #e0e0e0;
+	margin:0 auto;
 
-	margin: 0 auto;
-
-	font-size:14;
-	line-height:1.7;	
+	font-size:12pt;
+	line-height:20pt;
 	color:#666666;
-	
-	overflow-y:auto;
 }
 
 #container
 {
-	width:100%;
+	margin: 0 auto;
+	width:50%;
+	min-width:1000px;
+	min-height:100%;
 	overflow-y:auto;
+	
+	background-color: #e0e0e0;
 }
 
 #week_show
