@@ -1,27 +1,448 @@
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title> Mistery Lass </title>
-        <link rel="stylesheet" type="text/css" href="resources/styles/index.css">
-        <script type="text/javascript" src="scripts/vue.min.js"></script>
-        <script type="text/javascript" src="scripts/vue-router.js"></script>
-        <script type="text/javascript" src="scripts/lodash.js"></script>
-    </head>
-    <body>
-        <div id="container">
-            <div id="weekday">{{ currentWeekDayName }}</div>
-            <div id="title" >{{ currrentStoryTitle }}</div>
-            <div id="content" >{{ currrentStoryContent }}</div><!--div id="main_desc" v-html="mainContent"></div-->
+    <script type="text/javascript">
+        class RandomClass {
+            IntRange(max = 1, min = 0) {
+                if (max == min) return max;
+                else {
+                    if (max < min) [min, max] = [max, min];
+                    return min + Math.floor((max - min + 1) * Math.random());
+                }
+            }
+
+            Select() {
+                if (arguments.length >= 0) {
+                    let index = this.IntRange(0, arguments.length - 1);
+                    return arguments[index];
+                }
+                return null;
+            }
+        }
+
+        const Const = {};
+        const Random = new RandomClass();
+
+        class HSB{
+            constructor(h,s,b){
+                this.Set(h,s,b);
+            }
+
+            Set(h,s,b){
+                while(h < 0) h+=360;
+                while(h > 360) h-=360;
+                if(s < 0) s = 0;
+                if(s > 100) s = 100;
+                if(b < 0) b = 0;
+                if(b > 100) b = 100;
+                this.h = h;
+                this.s = s;
+                this.b = b;
+            }
+
+            HSVtoRGB(h, s, v) {
+                var r, g, b, i, f, p, q, t;
+                if (arguments.length === 1) {
+                    s = h.s, v = h.v, h = h.h;
+                }
+                i = Math.floor(h * 6);
+                f = h * 6 - i;
+                p = v * (1 - s);
+                q = v * (1 - f * s);
+                t = v * (1 - (1 - f) * s);
+                switch (i % 6) {
+                    case 0: r = v, g = t, b = p; break;
+                    case 1: r = q, g = v, b = p; break;
+                    case 2: r = p, g = v, b = t; break;
+                    case 3: r = p, g = q, b = v; break;
+                    case 4: r = t, g = p, b = v; break;
+                    case 5: r = v, g = p, b = q; break;
+                }
+                return {
+                    r: Math.round(r * 255),
+                    g: Math.round(g * 255),
+                    b: Math.round(b * 255)
+                };
+            }
+
+            toString(){
+                
+                let hsv2hsl = (h,s,v,l=v-v*s/2, m=Math.min(l,1-l)) => [h,m?(v-l)/m:0,l];
+                let h,s, l;
+
+                [h,s,l] = hsv2hsl(this.h / 360.0, this.s / 100.0, this.b / 100.0);
+                return "hsl("+h*360+","+s*100+"%,"+l*100+"%)";
+            }
+        }
+
+        class Gene{
+            constructor(f,m){
+                this.Set(f,m);
+            }
             
-            <!--div class="next_day" id="next_day_random" @click="goNextDayRandom">功能未完成，随机提供一个药瓶</div>
-            <div class="next_day" id="next_day_100" @click="goNextDayWith(100)">功能未完成，提供一个100%药瓶</div>
-            <div class="next_day" id="next_day_75"  @click="goNextDayWith(75)" >功能未完成，提供一个 75%药瓶</div>
-            <div class="next_day" id="next_day_50"  @click="goNextDayWith(50)" >功能未完成，提供一个 50%药瓶</div>
-            <div class="next_day" id="next_day_25"  @click="goNextDayWith(25)" >功能未完成，提供一个 25%药瓶</div>
-            <div class="next_day" id="next_day_5"   @click="goNextDayWith(5)"  >功能未完成，提供一个  5%药瓶</div-->
+            Set(f,m) {
+                this.father = f;
+                this.mother = m;
+            }
+            Select(){
+                return Math.floor(Math.random()*2) == 0 ? this.father : this.mother;
+            }
+            Crossover(mother){
+                return new Gene(this.Select(), mother.Select());
+            }
+        }
+
+        const GeneColor = { C: 0, Cr: 1, c: 2, Value: ["C", "Cr", "c"], };
+        const GeneIntensity = { I: 0, i: 1, Value: ["I", "i"], };
+        const GeneDilute = { D: 0, d: 1, Value: ["D", "d"], };
+        const GeneWhite = { W: 0, w: 1, Value: ["W", "w"], };
+
+        class Chromosome{
+            constructor(){
+                this.Color = new Gene(GeneColor.C, GeneColor.C);
+                this.Intensity = new Gene(GeneIntensity.I, GeneIntensity.I);
+                this.Dilute = new Gene(GeneDilute.D, GeneDilute.D);
+                this.White = new Gene(GeneWhite.W, GeneWhite.W);
+            }
+
+            Crossover(mother){
+                let c = new Chromosome();
+                c.Color = this.Color.Crossover(mother.Color);
+                c.Intensity = this.Intensity.Crossover(mother.Intensity);
+                c.Dilute = this.Dilute.Crossover(mother.Dilute);
+                c.White = this.White.Crossover(mother.White);
+                return c;
+            }
+        }
+
+        const ColorTable = [
+                [new HSB(280, 75, 90), new HSB(280, 35, 100), new HSB(285, 10, 100)],
+                [new HSB(305, 65, 100), new HSB(305, 35, 100), new HSB(325, 10, 100)],
+                [new HSB(0, 100, 75), new HSB(0, 45, 100), new HSB(0, 20, 100)],
+                [new HSB(20, 66, 95), new HSB(20, 45, 100), new HSB(30, 20, 100)],
+                [new HSB(30, 100, 100), new HSB(35, 35, 100), new HSB(35, 15, 100)],
+                [new HSB(55, 100, 95), new HSB(50, 35, 100), new HSB(55, 15, 100)]
+            ];
+
+        class Flower{
+            constructor(){
+                this.Chromosome = new Chromosome();              
+                this.Color = new HSB(ColorTable[0][0].h, ColorTable[0][0].s, ColorTable[0][0].l);
+            }
+
+            Generate() {
+                let ColorIndex = 0;
+                let IntensityLevel = 0;
+                
+                let ColorF = this.Chromosome.Color.father;
+                let ColorM = this.Chromosome.Color.mother;
+
+                if (ColorF == GeneColor.C || ColorM == GeneColor.C)
+                {
+                    ColorIndex = 0;
+                }
+                else if(ColorF == GeneColor.Cr || ColorM == GeneColor.Cr)
+                {
+                    ColorIndex = 2;
+                }
+                else
+                {
+                    ColorIndex = 4;
+                }
+
+                let IntensityF = this.Chromosome.Intensity.father;
+                let IntensityM = this.Chromosome.Intensity.mother;
+                if (IntensityF == GeneIntensity.I || IntensityM == GeneIntensity.I)
+                {
+                    IntensityLevel = 0;
+                }
+                else
+                {
+                    if(this.Chromosome.White.father == GeneWhite.w && this.Chromosome.White.mother == GeneWhite.w) {
+                        IntensityLevel = 2;
+                    }
+                    else{
+                        IntensityLevel = 1;
+                    }
+                }
+
+
+                let DiluteF = this.Chromosome.Dilute.father;
+                let DiluteM = this.Chromosome.Dilute.mother;
+                if (DiluteF == GeneDilute.d && DiluteM == GeneDilute.d)
+                {
+                    ColorIndex+=1;
+                }
+                
+                let ColorHSL = ColorTable[ColorIndex][IntensityLevel];
+                let h = ColorHSL.h + Math.random() * 7; - 3;
+                let s = ColorHSL.s - Math.random() * 6 + 2;
+                let b = ColorHSL.b - Math.random() * 5;
+                this.Color = new HSB(h,s,b);
+            }
+        }
+
+        const father = new Flower();
+        const mother = new Flower();
+        const flower = new Flower();
+
+        function onRandomize(prefix){
+            document.getElementById(prefix + "ColorF").value = Random.Select(GeneColor.C, GeneColor.Cr, GeneColor.c);
+            document.getElementById(prefix + "ColorM").value = Random.Select(GeneColor.C, GeneColor.Cr, GeneColor.c);
+            
+            document.getElementById(prefix + "IntensityF").value = Random.Select(GeneIntensity.I, GeneIntensity.i);
+            document.getElementById(prefix + "IntensityM").value = Random.Select(GeneIntensity.I, GeneIntensity.i);
+
+            
+            document.getElementById(prefix + "DiluteF").value = Random.Select(GeneDilute.D, GeneDilute.d);
+            document.getElementById(prefix + "DiluteM").value = Random.Select(GeneDilute.D, GeneDilute.d);
+
+            
+            document.getElementById(prefix + "WhiteF").value = Random.Select(GeneWhite.W, GeneWhite.w);
+            document.getElementById(prefix + "WhiteM").value = Random.Select(GeneWhite.W, GeneWhite.w);
+        }
+
+        function onGenerate(prefix, inFlower){
+
+            {
+                let f = document.getElementById(prefix + "ColorF").value;
+                let m = document.getElementById(prefix + "ColorM").value;
+                inFlower.Chromosome.Color.Set(f,m)
+            }
+            {
+                let f = document.getElementById(prefix + "IntensityF").value;
+                let m = document.getElementById(prefix + "IntensityM").value;
+                inFlower.Chromosome.Intensity.Set(f,m)
+            }
+            {
+                let f = document.getElementById(prefix + "DiluteF").value;
+                let m = document.getElementById(prefix + "DiluteM").value;
+                inFlower.Chromosome.Dilute.Set(f,m)
+            }
+            {
+                let f = document.getElementById(prefix + "WhiteF").value;
+                let m = document.getElementById(prefix + "WhiteM").value;
+                inFlower.Chromosome.White.Set(f,m)
+            }
+
+            inFlower.Generate();
+            document.getElementById(prefix + "background").style.backgroundColor = inFlower.Color.toString();
+        }
+
+        function onSetUI(prefix, inFlower){
+            document.getElementById(prefix + "ColorF").value = inFlower.Chromosome.Color.father;
+            document.getElementById(prefix + "ColorM").value = inFlower.Chromosome.Color.mother;
+            
+            document.getElementById(prefix + "IntensityF").value = inFlower.Chromosome.Intensity.father;
+            document.getElementById(prefix + "IntensityM").value = inFlower.Chromosome.Intensity.mother;
+
+            
+            document.getElementById(prefix + "DiluteF").value = inFlower.Chromosome.Dilute.father;
+            document.getElementById(prefix + "DiluteM").value = inFlower.Chromosome.Dilute.mother;
+
+            
+            document.getElementById(prefix + "WhiteF").value = inFlower.Chromosome.White.father;
+            document.getElementById(prefix + "WhiteM").value = inFlower.Chromosome.White.mother;
+            document.getElementById(prefix + "background").style.backgroundColor = inFlower.Color.toString();
+        }
+
+        function onOverride(inFlower, outFlower, prefix){
+            outFlower.Chromosome.Color.Set(inFlower.Chromosome.Color.father, inFlower.Chromosome.Color.mother);
+            outFlower.Chromosome.Intensity.Set(inFlower.Chromosome.Intensity.father, inFlower.Chromosome.Intensity.mother);
+            outFlower.Chromosome.Dilute.Set(inFlower.Chromosome.Dilute.father, inFlower.Chromosome.Dilute.mother);
+            outFlower.Chromosome.White.Set(inFlower.Chromosome.White.father, inFlower.Chromosome.White.mother);
+            outFlower.Color.Set(inFlower.Color.h,inFlower.Color.s,inFlower.Color.b);
+
+            onSetUI(prefix, outFlower);
+        }
+        
+        function onCrossover(){
+            
+            flower.Chromosome = father.Chromosome.Crossover(mother.Chromosome);
+            flower.Generate();
+           
+            onSetUI('', flower);
+        }
+
+    </script>
+    <body>
+        <div style="display:flex;gap:40px;margin-bottom:20px;">
+            <div id="father">
+                <span>father:</span>
+                <div id="father.background" style="width:200px;height:180px;display:block;background-color: hsla(0, 100%, 60%, 0.562);">
+                <img style="width:100%;height:100%;"src="resources/flower_temp.png">
+                </div>
+                <div>
+                    <label>颜色基因：</label>
+                    <select id="father.ColorF">
+                        <option value="0">C</option>
+                        <option value="1">Cr</option>
+                        <option value="2">c</option>
+                    </select> 
+                    <select id="father.ColorM">
+                        <option value="0">C</option>
+                        <option value="1">Cr</option>
+                        <option value="2">c</option>
+                    </select>
+                </div>
+                <div>
+                    <label>淡化基因：</label>
+                    <select id="father.IntensityF">
+                        <option value="0">I</option>
+                        <option value="1">i</option>
+                    </select> 
+                    <select id="father.IntensityM">
+                        <option value="0">I</option>
+                        <option value="1">i</option>
+                    </select>
+                </div>
+                <div>
+                    <label>稀释基因：</label>
+                    <select id="father.DiluteF">
+                        <option value="0">D</option>
+                        <option value="1">d</option>
+                    </select> 
+                    <select id="father.DiluteM">
+                        <option value="0">D</option>
+                        <option value="1">d</option>
+                    </select>
+                </div>
+                <div>
+                    <label>白化基因：</label>
+                    <select id="father.WhiteF">
+                        <option value="0">W</option>
+                        <option value="1">w</option>
+                    </select> 
+                    <select id="father.WhiteM">
+                        <option value="0">W</option>
+                        <option value="1">w</option>
+                    </select> 
+                </div>
+                <div>
+                    <button onclick="onGenerate('father.',father)">更新</button>
+                    <button onclick="onRandomize('father.');onGenerate('father.',father)">随机</button>
+                </div>
+            </div>
+
+            <div id="mother">
+                <span>mother:</span>
+                <div id="mother.background" style="width:200px;height:180px;display:block;background-color: hsla(0, 100%, 60%, 0.562);">
+                <img style="width:100%;height:100%;"src="resources/flower_temp.png">
+                </div>
+                <div>
+                    <label>颜色色基因：</label>
+                    <select id="mother.ColorF">
+                        <option value="0">C</option>
+                        <option value="1">Cr</option>
+                        <option value="2">c</option>
+                    </select> 
+                    <select id="mother.ColorM">
+                        <option value="0">C</option>
+                        <option value="1">Cr</option>
+                        <option value="2">c</option>
+                    </select>
+                </div>
+                <div>
+                    <label>淡化基因：</label>
+                    <select id="mother.IntensityF">
+                        <option value="0">I</option>
+                        <option value="1">i</option>
+                    </select> 
+                    <select id="mother.IntensityM">
+                        <option value="0">I</option>
+                        <option value="1">i</option>
+                    </select>
+                </div>
+                <div>
+                    <label>稀释基因：</label>
+                    <select id="mother.DiluteF">
+                        <option value="0">D</option>
+                        <option value="1">d</option>
+                    </select> 
+                    <select id="mother.DiluteM">
+                        <option value="0">D</option>
+                        <option value="1">d</option>
+                    </select>
+                </div>
+                <div>
+                    <label>白化基因：</label>
+                    <select id="mother.WhiteF">
+                        <option value="0">W</option>
+                        <option value="1">w</option>
+                    </select> 
+                    <select id="mother.WhiteM">
+                        <option value="0">W</option>
+                        <option value="1">w</option>
+                    </select> 
+                </div>
+                
+                <div>
+                    <button onclick="onGenerate('mother.', mother)">更新</button>
+                    <button onclick="onRandomize('mother.');onGenerate('mother.', mother)">随机</button>
+                </div>
+            </div> 
+        </div>
+
+        <button onclick="onCrossover()" style="width:200px;margin:50px;">杂交</button>  
+
+        <div id="child">
+            <div id="background" style="width:300px;height:270px;display:block;background-color: hsla(0, 100%, 60%, 0.562);">
+            <img style="width:100%;height:100%;"src="resources/flower_temp.png">
+            </div>
+        </div>
+        <div>
+            <label>颜色基因：</label>
+            <select id="ColorF">
+                <option value="0">C</option>
+                <option value="1">Cr</option>
+                <option value="2">c</option>
+            </select> 
+            <select id="ColorM">
+                <option value="0">C</option>
+                <option value="1">Cr</option>
+                <option value="2">c</option>
+            </select>
+        </div>
+        <div>
+            <label>淡化基因：</label>
+            <select id="IntensityF">
+                <option value="0">I</option>
+                <option value="1">i</option>
+            </select> 
+            <select id="IntensityM">
+                <option value="0">I</option>
+                <option value="1">i</option>
+            </select> 
+        </div>
+        <div>
+            <label>稀释基因：</label>
+            <select id="DiluteF">
+                <option value="0">D</option>
+                <option value="1">d</option>
+            </select> 
+            <select id="DiluteM">
+                <option value="0">D</option>
+                <option value="1">d</option>
+            </select> 
+        </div>
+        <div>
+            <label>白化基因：</label>
+            <select id="WhiteF">
+                <option value="0">W</option>
+                <option value="1">w</option>
+            </select> 
+            <select id="WhiteM">
+                <option value="0">W</option>
+                <option value="1">w</option>
+            </select> 
+        </div>
+        <div>
+            <button onclick="onOverride(flower, father, 'father.')">设为父本</button>
+            <button onclick="onOverride(flower, mother, 'mother.')">设为母本</button>
+            <button onclick="onGenerate('',flower)">更新</button>
         </div>
     </body>
-    <script type="text/javascript" src="resources/datas/stories.js"></script>
-    <script type="text/javascript" src="resources/datas/story.js"></script>
-    <script type="text/javascript" src="scripts/index.js"></script>
+    <script>
+        onRandomize('father.');onGenerate('father.',father);
+        onRandomize('mother.');onGenerate('mother.',mother);
+        onCrossover();
+    </script>
 </html>
