@@ -1,0 +1,80 @@
+body
+{
+    margin:0px;
+    padding:0px;
+    background-color: #A0A0A0;
+}
+
+#container
+{
+    margin:0px auto;
+    width:50%;
+    max-width: 1170px;
+    min-width: 800px;
+    
+    background-color: white;
+}
+
+#LogPanel,
+#ControlPanel
+{
+    width:100%;
+}
+
+#LogPanel
+{
+    min-height:800px;
+}
+
+#ControlPanel
+{
+    background-color: antiquewhite;
+    padding-bottom:100px;
+}
+
+
+.HintText
+{
+    text-align: center;
+}
+
+#TextStoryLog
+{
+    padding-top: 100px;
+}
+
+#TutorialHint
+{
+    padding-top: 20px;
+}
+
+#OptionHint
+{
+    padding-top: 20px;
+    height:50px;
+}
+
+
+.DirectionSelector
+{
+    flex:1;
+    margin:0 auto;
+    width:150px;
+}
+
+.DirectionSelector .row
+{
+    display: flex;
+}
+
+#UserInputPanel .row div
+{
+    display: block;
+    width:50px;
+}
+#UserInputPanel .row button
+{
+    
+    width:50px;
+    height:30px;
+}
